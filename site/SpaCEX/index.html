@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    
+    
+    <link rel="shortcut icon" href="../img/favicon.ico">
+
+    
+    <title>SpaCEX - Learning Context-aware Distributed Gene Representations in Spatial Transcriptomics with SpaCEX</title>
+    
+
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.12.0/css/all.css">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.12.0/css/v4-shims.css">
+    <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/hack-font@3.3.0/build/web/hack.min.css">
+    <link href='//rsms.me/inter/inter.css' rel='stylesheet' type='text/css'>
+    <link href='//fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,700italic,400,300,600,700&subset=latin-ext,latin' rel='stylesheet' type='text/css'>
+    <link href="../css/bootstrap-custom.min.css" rel="stylesheet">
+    <link href="../css/base.min.css" rel="stylesheet">
+    <link href="../css/cinder.min.css" rel="stylesheet">
+
+    
+        
+        <link rel="stylesheet" href="//cdn.jsdelivr.net/gh/highlightjs/cdn-release@9.18.0/build/styles/github.min.css">
+        
+    
+    <link href="../css/mystyle.css" rel="stylesheet">
+
+    <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!--[if lt IE 9]>
+            <script src="https://cdn.jsdelivr.net/npm/html5shiv@3.7.3/dist/html5shiv.min.js"></script>
+            <script src="https://cdn.jsdelivr.net/npm/respond.js@1.4.2/dest/respond.min.js"></script>
+        <![endif]-->
+
+    
+
+     
+</head>
+
+<body>
+
+    <div class="navbar navbar-default navbar-fixed-top" role="navigation">
+    <div class="container">
+
+        <!-- Collapsed navigation -->
+        <div class="navbar-header">
+
+            <!-- Main title -->
+
+            
+              <a class="navbar-brand" href="..">Learning Context-aware Distributed Gene Representations in Spatial Transcriptomics with SpaCEX</a>
+            
+        </div>
+
+        <!-- Expanded navigation -->
+        <div class="navbar-collapse collapse">
+
+            <ul class="nav navbar-nav navbar-right">
+                    <li>
+                        <a href="#" data-toggle="modal" data-target="#mkdocs_search_modal">
+                            <i class="fas fa-search"></i> Search
+                        </a>
+                    </li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+    <div class="container">
+        
+        
+        <div class="col-md-3"><div class="bs-sidebar hidden-print affix well" role="complementary">
+    <ul class="nav bs-sidenav">
+        <li class="first-level active"><a href="#step1-load-data">Step1: Load data</a></li>
+        <li class="first-level "><a href="#step2-generate-sges">Step2: Generate SGEs</a></li>
+        <li class="first-level "><a href="#step3-hierarchical-clustering">Step3: Hierarchical clustering</a></li>
+    </ul>
+</div></div>
+        <div class="col-md-9" role="main">
+
+<h2 id="step1-load-data">Step1: Load data</h2>
+<pre><code class="language-python">from SpaCEX.src.main.SpaCEX import SpaCEX
+from sklearn.preprocessing import MinMaxScaler
+from scipy.cluster import hierarchy
+import seaborn as sns
+import matplotlib.pyplot as plt
+import warnings
+warnings.filterwarnings(&quot;ignore&quot;)
+</code></pre>
+<pre><code class="language-python">## get adata and image data
+adata= SpaCEX.get_data(sample_id='151676', data_type='adata')
+dataset, adata = SpaCEX.data_process(adata)
+gene_name = adata.var.index.values
+</code></pre>
+<h2 id="step2-generate-sges">Step2: Generate SGEs</h2>
+<p><code>python
+ ## train model with pretrained model
+ y_pred, SGEs, model = SpaCEX.train(dataset=dataset, pretrain=False)
+ SGEs = SGEs.detach().cpu().numpy()</code></p>
+<pre><code>adata2image: 100%|██████████| 18639/18639 [05:25&lt;00:00, 57.27gene/s]
+</code></pre>
+<h2 id="step3-hierarchical-clustering">Step3: Hierarchical clustering</h2>
+<pre><code class="language-python">## select the gene family
+key_select = ['KRT1', 'KRT5', 'KRT7', 'KRT86', 'KRT81', 'KRT83', 'KRT6B', 'KRT6A', 'KRT8', 'KRT23', 'KRT33B', 'KRT31', 'KRT37',
+               'HLA-A', 'HLA-E', 'HLA-C', 'HLA-F', 'HLA-B',
+              'HLA-DRA', 'HLA-DRB5', 'HLA-DRB1', 'HLA-DQA1', 'HLA-DQB1', 'HLA-DQA2', 'HLA-DQB2', 'HLA-DPA1', 'HLA-DPB1'
+              ]
+combined_data = zip(gene_name, SGEs)
+emb = dict(combined_data)
+emb = {key:emb[key] for key, value in emb.items() if key in key_select}
+my_dict = {}
+for key in emb.keys():
+    my_dict[key] = np.array(emb[key]).flatten()
+sorted_dict = dict(sorted(my_dict.items(), key=lambda x: key_select.index(x[0])))
+sorted_dict_value = np.array(list(sorted_dict.values()))
+scaler = MinMaxScaler()
+</code></pre>
+<pre><code class="language-python">## norm the data
+normalized_array = scaler.fit_transform(sorted_dict_value.T).T
+my_dict_norm = {}
+for i in range(len(sorted_dict)):
+    key = list(sorted_dict.keys())[i]
+    my_dict_norm[key] = normalized_array[i]
+</code></pre>
+<pre><code class="language-python">## plot hierarchical clustering results
+df = pd.DataFrame.from_dict(my_dict_norm, orient='index')
+
+sns.set(font_scale=2.5, font='sans-serif')
+row_colors = ['#00C5CD'] * 13 + ['#1E90FF'] * 5 + ['#CD3333'] * 9
+
+## hierarchical clustering
+row_linkage = hierarchy.linkage(df, method='average')
+col_linkage = hierarchy.linkage(df.transpose(), method='average')
+
+# plot heatmap
+sns.set(font_scale=1., font='sans-serif' )
+sns.clustermap(df, row_linkage=row_linkage, col_linkage=col_linkage, cmap='coolwarm', row_colors=[row_colors], figsize=(10,8))
+
+plt.show()
+</code></pre>
+<p><img alt="png" src="../output_1_0.png" /></p></div>
+        
+        
+    </div>
+
+    
+      <footer class="col-md-12 text-center">
+          
+          
+            <hr>
+            <p>
+            <small>Documentation built with <a href="http://www.mkdocs.org/">MkDocs</a>.</small>
+            </p>
+          
+
+          
+          
+      </footer>
+    
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+    <script src="../js/bootstrap-3.0.3.min.js"></script>
+
+    
+    <script src="//cdn.jsdelivr.net/gh/highlightjs/cdn-release@9.18.0/build/highlight.min.js"></script>
+        
+    <script>hljs.initHighlightingOnLoad();</script>
+    
+
+    <script>var base_url = ".."</script>
+    
+    <script src="../js/base.js"></script>
+    <script src="../search/main.js"></script>
+
+    <div class="modal" id="mkdocs_search_modal" tabindex="-1" role="dialog" aria-labelledby="searchModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">
+                    <span aria-hidden="true">&times;</span>
+                    <span class="sr-only">Close</span>
+                </button>
+                <h4 class="modal-title" id="searchModalLabel">Search</h4>
+            </div>
+            <div class="modal-body">
+                <p>
+                    From here you can search these documents. Enter
+                    your search terms below.
+                </p>
+                <form>
+                    <div class="form-group">
+                        <input type="text" class="form-control" placeholder="Search..." id="mkdocs-search-query" title="Type search term here">
+                    </div>
+                </form>
+                <div id="mkdocs-search-results"></div>
+            </div>
+            <div class="modal-footer">
+            </div>
+        </div>
+    </div>
+</div><div class="modal" id="mkdocs_keyboard_modal" tabindex="-1" role="dialog" aria-labelledby="keyboardModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title" id="keyboardModalLabel">Keyboard Shortcuts</h4>
+                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+            </div>
+            <div class="modal-body">
+              <table class="table">
+                <thead>
+                  <tr>
+                    <th style="width: 20%;">Keys</th>
+                    <th>Action</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td class="help shortcut"><kbd>?</kbd></td>
+                    <td>Open this help</td>
+                  </tr>
+                  <tr>
+                    <td class="next shortcut"><kbd>n</kbd></td>
+                    <td>Next page</td>
+                  </tr>
+                  <tr>
+                    <td class="prev shortcut"><kbd>p</kbd></td>
+                    <td>Previous page</td>
+                  </tr>
+                  <tr>
+                    <td class="search shortcut"><kbd>s</kbd></td>
+                    <td>Search</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <div class="modal-footer">
+            </div>
+        </div>
+    </div>
+</div>
+    </body>
+
+</html>

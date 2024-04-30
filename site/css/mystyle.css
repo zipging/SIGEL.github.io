@@ -1,0 +1,20 @@
+p {
+    text-align: justify;
+}
+
+h1 {
+    font-size: 24px; /* 修改标题h1的字号 */
+  }
+
+h2 {
+    font-size: 20px; /* 修改标题h1的字号 */
+  }
+
+h3 {
+    font-size: 18px; /* 修改标题h1的字号 */
+  }
+  
+p {
+    font-size: 14px; /* 修改正文的字号 */
+  }
+  
