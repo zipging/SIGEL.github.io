@@ -1,0 +1,8 @@
+site_name: Learning Context-aware Distributed Gene Representations in Spatial Transcriptomics with SpaCEX 
+theme:
+  name: null
+  custom_dir: 'cinder'
+extra_css:
+  - "css/mystyle.css"
+nav:
+  - SpaCEX: index.md
