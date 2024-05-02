@@ -1,4 +1,4 @@
-# 0 Welcome to SpaCEX! (Made by LWL)
+# 0 Welcome to SpaCEX
 We develop the SpaCEX which utilize self-supervised learning on **SPa**tially **C**o-**EX**pressed genes that can simultaneously identify spatially co-expressed genes and learn semantically meaningful gene embeddings from SRT data through a pretext task of gene clustering. SpaCEX first employs an image encoder to transform the spatial expression maps of genes into gene embeddings modeled by a Student’s t mixture distribution (SMM). Subsequently, a discriminatively boosted gene clustering algorithm is applied on the posterior soft assignments of genes to the mixture components, iteratively adapting the parameters of the encoder and the SMM.
 
 <div style="text-align: center;">
@@ -56,44 +56,6 @@ Example data required for SpaCEX is available [here](https://drive.google.com/dr
 
 ```
 
-## 1.4 Quikc start in three specific tasks
-
-Here, example data is preprocessed to demonstrate the application of SpaCEX in three tasks: **Enhancement of the Transcriptomic Coverage in Fish-based ST (ETC)**, **SVG Detection**, and **Spatial Clustering**. In each task, we first remove mitochondrial and External RNA Controls Consortium (ERCC) spike-in genes. Then, genes detected in fewer than 10 spots are excluded. To preserve the spatial data integrity, we do not perform quality control on spatial spots. Finally, the gene expression counts are normalized by library size, followed by log-transformation. 
-
-### 1.4.1 ETC data process
-
-In the data preprocessing step for ETC, it is assumed that the example data is organized as depicted in Section 1.3. Building upon this, one can read the SeqFish data `adata` and perform data preprocessing to yield processed gene names `key_m`, gene expression data in image format `dataset_m`, and gene names for 10x-Visium data `key_v`, along with image format data `dataset_v`.
-
-
-```python
-from SpaCEX.src.SpaCEX_ETC.src.main.SpaCEX_ETC import SpaCEX_ETC
-## get data on 10x and sqf
-adata = SpaCEX_ETC.get_data(data='sqf', data_type='adata')
-adata, key_m, dataset_m = SpaCEX_ETC.data_process(adata)
-# key_m, dataset_m = SpaCEX_ETC.get_data(data='sqf', data_type='image')
-key_v, dataset_v = SpaCEX_ETC.get_data(data='10x', data_type='image')
-```
-
-### 1.4.2 SVG detection data process
-
-In the SVG detection process, the ST data read into `adata` undergoes preprocessing and is then transformed into an image-formatted dataset `dataset`.
-
-
-```python
-## get adata and image data
-adata= SpaCEX.get_data(sample_id='151676', data_type='adata')
-dataset, adata = SpaCEX.data_process(adata)
-```
-
-### 1.4.3 Spatial clustering data process
-
-During the spatial clustering phase, the ST data, once ingested into `adata`, is subject to preprocessing steps before being formatted into an image-based dataset, `dataset``.
-
-```python
-## get adata and image data
-adata= SpaCEX.get_data(sample_id='151676', data_type='adata')
-dataset, adata = SpaCEX.data_process(adata)
-```
 
 # 2 Train model to obtain SpaCEX-Generated Embeddings (SGEs) via ST dataset
 
@@ -104,10 +66,6 @@ In this task, we use 10x-visium data adata to generate embeddings SGEs.
 The original `adata` is processed and converted into an image dataset `dataset`, with the gene names also extracted as `gene_name`
 ```python
 from SpaCEX.src.main.SpaCEX import SpaCEX
-from sklearn.preprocessing import MinMaxScaler
-from scipy.cluster import hierarchy
-import seaborn as sns
-import matplotlib.pyplot as plt
 import warnings
 warnings.filterwarnings("ignore")
 ```
@@ -119,5 +77,8 @@ dataset, adata = SpaCEX.data_process(adata)
 gene_name = adata.var.index.values
 ```
 
-In this 
+```python
+## get SGEs
+z, model = SpaCEX.train(dataset, pretrain=True)
+```
 
