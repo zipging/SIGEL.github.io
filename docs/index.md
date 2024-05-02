@@ -82,3 +82,4 @@ gene_name = adata.var.index.values
 z, model = SpaCEX.train(dataset, pretrain=True)
 ```
 
+##Everything else is prepared and ready for deployment. If you have any other needs, please directly contact Wenlin Li at the email: zipging@gmail.com. ##
