@@ -11,7 +11,7 @@
     <link rel="shortcut icon" href="../img/favicon.ico">
 
     
-    <title>SpaCEX SVG - Learning Context-aware Distributed Gene Representations in Spatial Transcriptomics with SpaCEX</title>
+    <title>SIGEL SVG - A context-aware genomic language model for gene spatial expression imputation, pattern detection, and function discovery</title>
     
 
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.12.0/css/all.css">
@@ -52,7 +52,7 @@
             <!-- Main title -->
 
             
-              <a class="navbar-brand" href="..">Learning Context-aware Distributed Gene Representations in Spatial Transcriptomics with SpaCEX</a>
+              <a class="navbar-brand" href="..">A context-aware genomic language model for gene spatial expression imputation, pattern detection, and function discovery</a>
             
         </div>
 
@@ -76,7 +76,7 @@
         <div class="col-md-3"><div class="bs-sidebar hidden-print affix well" role="complementary">
     <ul class="nav bs-sidenav">
         <li class="first-level active"><a href="#step1-load-data">Step1: Load data</a></li>
-        <li class="first-level "><a href="#step2-train-spacex-to-get-sges">Step2: Train SpaCEX to get SGEs</a></li>
+        <li class="first-level "><a href="#step2-train-sigel-to-get-sges">Step2: Train SIGEL to get SGEs</a></li>
         <li class="first-level "><a href="#step3-generate-svg-score">Step3: Generate SVG score</a></li>
         <li class="first-level "><a href="#step4-display-the-result">Step4: Display the result</a></li>
     </ul>
@@ -84,9 +84,9 @@
         <div class="col-md-9" role="main">
 
 <h2 id="step1-load-data">Step1: Load data</h2>
-<pre><code class="language-python">from SpaCEX.src.SpaCEX_SVG.utils import simu_zinb
-from SpaCEX.src.SpaCEX_SVG.utils import get_svg_score
-from SpaCEX.src.main.SpaCEX import SpaCEX
+<pre><code class="language-python">from SIGEL.src.SIGEL_SVG.utils import simu_zinb
+from SIGEL.src.SIGEL_SVG.utils import get_svg_score
+from SIGEL.src.main.SIGEL import SIGEL
 import matplotlib.pyplot as plt
 import pandas as pd
 import scanpy as sc
@@ -95,17 +95,17 @@ import warnings
 warnings.filterwarnings(&quot;ignore&quot;)
 </code></pre>
 <pre><code class="language-python">## get adata and image data
-adata= SpaCEX.get_data(sample_id='151676', data_type='adata')
-dataset, adata = SpaCEX.data_process(adata)
+adata= SIGEL.get_data(sample_id='151676', data_type='adata')
+dataset, adata = SIGEL.data_process(adata)
 </code></pre>
 <pre><code>adata2image: 100%|██████████| 18639/18639 [05:25&lt;00:00, 57.27gene/s]
 </code></pre>
-<h2 id="step2-train-spacex-to-get-sges">Step2: Train SpaCEX to get SGEs</h2>
+<h2 id="step2-train-sigel-to-get-sges">Step2: Train SIGEL to get SGEs</h2>
 <pre><code class="language-python">## train model with pretrained model
-y_pred, SGEs, model = SpaCEX.train(dataset=dataset, pretrain=False)
+y_pred, SGEs, model = SIGEL.train(dataset=dataset, pretrain=False)
 </code></pre>
 <pre><code>use cuda: True
-load pretrained mae from SpaCEX/model_pretrained/SpaCEX.pkl
+load pretrained mae from SIGEL/model_pretrained/SIGEL.pkl
 
 
 Clustering: 100%|██████████| 30/30 [07:55&lt;00:00, 15.84s/it]

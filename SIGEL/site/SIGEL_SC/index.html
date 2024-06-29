@@ -11,7 +11,7 @@
     <link rel="shortcut icon" href="../img/favicon.ico">
 
     
-    <title>SpaCEX-SC - Learning Context-aware Distributed Gene Representations in Spatial Transcriptomics with SpaCEX</title>
+    <title>SIGEL-SC - A context-aware genomic language model for gene spatial expression imputation, pattern detection, and function discovery</title>
     
 
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.12.0/css/all.css">
@@ -52,7 +52,7 @@
             <!-- Main title -->
 
             
-              <a class="navbar-brand" href="..">Learning Context-aware Distributed Gene Representations in Spatial Transcriptomics with SpaCEX</a>
+              <a class="navbar-brand" href="..">A context-aware genomic language model for gene spatial expression imputation, pattern detection, and function discovery</a>
             
         </div>
 
@@ -75,12 +75,12 @@
         
         <div class="col-md-3"><div class="bs-sidebar hidden-print affix well" role="complementary">
     <ul class="nav bs-sidenav">
-        <li class="first-level active"><a href="#spacex-sc">SpaCEX-SC</a></li>
+        <li class="first-level active"><a href="#sigel-sc">SIGEL-SC</a></li>
             <li class="second-level"><a href="#step1-load-data">Step1: Load data</a></li>
                 
-            <li class="second-level"><a href="#step2-generate-svg-score-by-spacex-svg">Step2: Generate SVG score by SpaCEX-SVG</a></li>
+            <li class="second-level"><a href="#step2-generate-svg-score-by-sigel-svg">Step2: Generate SVG score by SIGEL-SVG</a></li>
                 
-            <li class="second-level"><a href="#stpe3-carry-out-spacex-sc">Stpe3: Carry out SpaCEX-SC</a></li>
+            <li class="second-level"><a href="#stpe3-carry-out-sigel-sc">Stpe3: Carry out SIGEL-SC</a></li>
                 
             <li class="second-level"><a href="#stpe4-show-the-result">Stpe4: Show the result</a></li>
                 
@@ -88,15 +88,15 @@
 </div></div>
         <div class="col-md-9" role="main">
 
-<h1 id="spacex-sc">SpaCEX-SC</h1>
+<h1 id="sigel-sc">SIGEL-SC</h1>
 <h2 id="step1-load-data">Step1: Load data</h2>
 <pre><code class="language-python">from sklearn.metrics.cluster import normalized_mutual_info_score
 from collections import OrderedDict
 from sklearn.metrics import adjusted_rand_score
-from SpaCEX.src.SpaCEX_SVG.utils import simu_zinb
-from SpaCEX.src.SpaCEX_SVG.utils import get_svg_score
-from SpaCEX.src.SpaCEX_SC.SpaCEX_SC import SpaCEX_SC
-from SpaCEX.src.main.SpaCEX import SpaCEX
+from SIGEL.src.SIGEL_SVG.utils import simu_zinb
+from SIGEL.src.SIGEL_SVG.utils import get_svg_score
+from SIGEL.src.SIGEL_SC.SIGEL_SC import SIGEL_SC
+from SIGEL.src.main.SIGEL import SIGEL
 import matplotlib.pyplot as plt
 import pandas as pd
 import scanpy as sc
@@ -105,17 +105,17 @@ import warnings
 warnings.filterwarnings(&quot;ignore&quot;)
 </code></pre>
 <pre><code class="language-python">## get adata and image data
-adata= SpaCEX.get_data(sample_id='151676', data_type='adata')
-dataset, adata = SpaCEX.data_process(adata)
+adata= SIGEL.get_data(sample_id='151676', data_type='adata')
+dataset, adata = SIGEL.data_process(adata)
 </code></pre>
 <pre><code>adata2image: 100%|██████████| 18639/18639 [05:27&lt;00:00, 56.85gene/s]
 </code></pre>
-<h2 id="step2-generate-svg-score-by-spacex-svg">Step2: Generate SVG score by SpaCEX-SVG</h2>
+<h2 id="step2-generate-svg-score-by-sigel-svg">Step2: Generate SVG score by SIGEL-SVG</h2>
 <pre><code class="language-python">## train model with pretrained model
-y_pred, SGEs, model = SpaCEX.train(dataset=dataset, pretrain=False)
+y_pred, SGEs, model = SIGEL.train(dataset=dataset, pretrain=False)
 </code></pre>
 <pre><code>use cuda: True
-load pretrained mae from SpaCEX/model_pretrained/SpaCEX.pkl
+load pretrained mae from SIGEL/model_pretrained/SIGEL.pkl
 
 
 Clustering: 100%|██████████| 30/30 [07:12&lt;00:00, 14.41s/it]
@@ -126,17 +126,17 @@ svg_score = get_svg_score(SGEs, dataset, adata, model, sim_times=10)
 </code></pre>
 <pre><code>100%|██████████| 10/10 [02:27&lt;00:00, 14.76s/it]
 </code></pre>
-<h2 id="stpe3-carry-out-spacex-sc">Stpe3: Carry out SpaCEX-SC</h2>
+<h2 id="stpe3-carry-out-sigel-sc">Stpe3: Carry out SIGEL-SC</h2>
 <pre><code class="language-python">## get original data
-adata= SpaCEX.get_data(sample_id='151676', data_type='adata')
+adata= SIGEL.get_data(sample_id='151676', data_type='adata')
 </code></pre>
 <pre><code class="language-python">## select genes
-new_samples_indices = SpaCEX_SC.gene_select(cluster_labels, svg_score, selection_percentage=0.5)
+new_samples_indices = SIGEL_SC.gene_select(cluster_labels, svg_score, selection_percentage=0.5)
 </code></pre>
 <pre><code class="language-markdown">select 9263 genes
 </code></pre>
 <pre><code class="language-python">## spatial clustering
-adata = SpaCEX_SC.spatial_clustering(adata, new_samples_indices, n_clusters=7)
+adata = SIGEL_SC.spatial_clustering(adata, new_samples_indices, n_clusters=7)
 </code></pre>
 <pre><code>Calculateing adj matrix using xy only...
 Run 1: l [0.01, 1000], p [0.0, 3421.9987256815807]

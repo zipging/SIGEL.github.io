@@ -1,13 +1,13 @@
-# SpaCEX-SC
+# SIGEL-SC
 ## Step1: Load data
 ```python
 from sklearn.metrics.cluster import normalized_mutual_info_score
 from collections import OrderedDict
 from sklearn.metrics import adjusted_rand_score
-from SpaCEX.src.SpaCEX_SVG.utils import simu_zinb
-from SpaCEX.src.SpaCEX_SVG.utils import get_svg_score
-from SpaCEX.src.SpaCEX_SC.SpaCEX_SC import SpaCEX_SC
-from SpaCEX.src.main.SpaCEX import SpaCEX
+from SIGEL.src.SIGEL_SVG.utils import simu_zinb
+from SIGEL.src.SIGEL_SVG.utils import get_svg_score
+from SIGEL.src.SIGEL_SC.SIGEL_SC import SIGEL_SC
+from SIGEL.src.main.SIGEL import SIGEL
 import matplotlib.pyplot as plt
 import pandas as pd
 import scanpy as sc
@@ -19,21 +19,21 @@ warnings.filterwarnings("ignore")
 
 ```python
 ## get adata and image data
-adata= SpaCEX.get_data(sample_id='151676', data_type='adata')
-dataset, adata = SpaCEX.data_process(adata)
+adata= SIGEL.get_data(sample_id='151676', data_type='adata')
+dataset, adata = SIGEL.data_process(adata)
 ```
 
     adata2image: 100%|██████████| 18639/18639 [05:27<00:00, 56.85gene/s]
 
 
-## Step2: Generate SVG score by SpaCEX-SVG
+## Step2: Generate SVG score by SIGEL-SVG
 ```python
 ## train model with pretrained model
-y_pred, SGEs, model = SpaCEX.train(dataset=dataset, pretrain=False)
+y_pred, SGEs, model = SIGEL.train(dataset=dataset, pretrain=False)
 ```
 
     use cuda: True
-    load pretrained mae from SpaCEX/model_pretrained/SpaCEX.pkl
+    load pretrained mae from SIGEL/model_pretrained/SIGEL.pkl
 
 
     Clustering: 100%|██████████| 30/30 [07:12<00:00, 14.41s/it]
@@ -48,17 +48,17 @@ svg_score = get_svg_score(SGEs, dataset, adata, model, sim_times=10)
 
     100%|██████████| 10/10 [02:27<00:00, 14.76s/it]
 
-## Stpe3: Carry out SpaCEX-SC
+## Stpe3: Carry out SIGEL-SC
 
 ```python
 ## get original data
-adata= SpaCEX.get_data(sample_id='151676', data_type='adata')
+adata= SIGEL.get_data(sample_id='151676', data_type='adata')
 ```
 
 
 ```python
 ## select genes
-new_samples_indices = SpaCEX_SC.gene_select(cluster_labels, svg_score, selection_percentage=0.5)
+new_samples_indices = SIGEL_SC.gene_select(cluster_labels, svg_score, selection_percentage=0.5)
 ```
 
 ```markdown
@@ -69,7 +69,7 @@ select 9263 genes
 
 ```python
 ## spatial clustering
-adata = SpaCEX_SC.spatial_clustering(adata, new_samples_indices, n_clusters=7)
+adata = SIGEL_SC.spatial_clustering(adata, new_samples_indices, n_clusters=7)
 ```
 
     Calculateing adj matrix using xy only...

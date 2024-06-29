@@ -1,8 +1,8 @@
-site_name: Learning Context-aware Distributed Gene Representations in Spatial Transcriptomics with SpaCEX 
+site_name: A context-aware genomic language model for gene spatial expression imputation, pattern detection, and function discovery 
 theme:
   name: null
   custom_dir: 'cinder'
 extra_css:
   - "css/mystyle.css"
 nav:
-  - SpaCEX: index.md
+  - SIGEL: index.md

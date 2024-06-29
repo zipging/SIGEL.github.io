@@ -1,29 +1,29 @@
 ## Step1: Load 10x-mEmb and sqf-mEmb
 
 ```python
-from SpaCEX.src.SpaCEX_ETC.src.main.SpaCEX_ETC import SpaCEX_ETC
+from SIGEL.src.SIGEL_ETC.src.main.SIGEL_ETC import SIGEL_ETC
 ```
 
 
 ```python
 # get data on 10x and sqf
-adata = SpaCEX_ETC.get_data(data='sqf', data_type='adata')
-adata, key_m, dataset_m = SpaCEX_ETC.data_process(adata)
-#key_m, dataset_m = SpaCEX_ETC.get_data(data='sqf', data_type='image')
-key_v, dataset_v = SpaCEX_ETC.get_data(data='10x', data_type='image')
+adata = SIGEL_ETC.get_data(data='sqf', data_type='adata')
+adata, key_m, dataset_m = SIGEL_ETC.data_process(adata)
+#key_m, dataset_m = SIGEL_ETC.get_data(data='sqf', data_type='image')
+key_v, dataset_v = SIGEL_ETC.get_data(data='10x', data_type='image')
 ```
 
-## Step2: Train the SpaCEX-ETC
+## Step2: Train the SIGEL-ETC
 
 ```python
-# load pretrained SpaCEX
-model = SpaCEX_ETC.load_model()
-all_gmat_v2m, all_gmat_m2v = SpaCEX_ETC.data_filter(key_v, dataset_v, key_m, dataset_m)
+# load pretrained SIGEL
+model = SIGEL_ETC.load_model()
+all_gmat_v2m, all_gmat_m2v = SIGEL_ETC.data_filter(key_v, dataset_v, key_m, dataset_m)
 ```
 
 
 ```python
-Gen, SGEs = SpaCEX_ETC.train_ETC(adata, all_gmat_v2m, all_gmat_m2v, model)
+Gen, SGEs = SIGEL_ETC.train_ETC(adata, all_gmat_v2m, all_gmat_m2v, model)
 ```
 
     100%|██████████| 100/100 [00:46<00:00,  2.13it/s]
@@ -31,7 +31,7 @@ Gen, SGEs = SpaCEX_ETC.train_ETC(adata, all_gmat_v2m, all_gmat_m2v, model)
 ## Step3: Generate genes expression image on the test set
 
 ```python
-img_gen = SpaCEX_ETC.sqf_gen(Gen, SGEs, adata)
+img_gen = SIGEL_ETC.sqf_gen(Gen, SGEs, adata)
 ```
 
 

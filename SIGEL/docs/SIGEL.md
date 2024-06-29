@@ -1,7 +1,7 @@
 ## Step1: Load data
 
 ```python
-from SpaCEX.src.main.SpaCEX import SpaCEX
+from SIGEL.src.main.SIGEL import SIGEL
 from sklearn.preprocessing import MinMaxScaler
 from scipy.cluster import hierarchy
 import seaborn as sns
@@ -12,8 +12,8 @@ warnings.filterwarnings("ignore")
 
 ```python
 ## get adata and image data
-adata= SpaCEX.get_data(sample_id='151676', data_type='adata')
-dataset, adata = SpaCEX.data_process(adata)
+adata= SIGEL.get_data(sample_id='151676', data_type='adata')
+dataset, adata = SIGEL.data_process(adata)
 gene_name = adata.var.index.values
 ```
 
@@ -21,7 +21,7 @@ gene_name = adata.var.index.values
 
  ```python
  ## train model with pretrained model
- y_pred, SGEs, model = SpaCEX.train(dataset=dataset, pretrain=False)
+ y_pred, SGEs, model = SIGEL.train(dataset=dataset, pretrain=False)
  SGEs = SGEs.detach().cpu().numpy()
  ```
 

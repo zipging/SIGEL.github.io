@@ -11,7 +11,7 @@
     <link rel="shortcut icon" href="../img/favicon.ico">
 
     
-    <title>SpaCEX ETC - Learning Context-aware Distributed Gene Representations in Spatial Transcriptomics with SpaCEX</title>
+    <title>SIGEL ETC - A context-aware genomic language model for gene spatial expression imputation, pattern detection, and function discovery</title>
     
 
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.12.0/css/all.css">
@@ -52,7 +52,7 @@
             <!-- Main title -->
 
             
-              <a class="navbar-brand" href="..">Learning Context-aware Distributed Gene Representations in Spatial Transcriptomics with SpaCEX</a>
+              <a class="navbar-brand" href="..">A context-aware genomic language model for gene spatial expression imputation, pattern detection, and function discovery</a>
             
         </div>
 
@@ -76,32 +76,32 @@
         <div class="col-md-3"><div class="bs-sidebar hidden-print affix well" role="complementary">
     <ul class="nav bs-sidenav">
         <li class="first-level active"><a href="#step1-load-10x-memb-and-sqf-memb">Step1: Load 10x-mEmb and sqf-mEmb</a></li>
-        <li class="first-level "><a href="#step2-train-the-spacex-etc">Step2: Train the SpaCEX-ETC</a></li>
+        <li class="first-level "><a href="#step2-train-the-sigel-etc">Step2: Train the SIGEL-ETC</a></li>
         <li class="first-level "><a href="#step3-generate-genes-expression-image-on-the-test-set">Step3: Generate genes expression image on the test set</a></li>
     </ul>
 </div></div>
         <div class="col-md-9" role="main">
 
 <h2 id="step1-load-10x-memb-and-sqf-memb">Step1: Load 10x-mEmb and sqf-mEmb</h2>
-<pre><code class="language-python">from SpaCEX.src.SpaCEX_ETC.src.main.SpaCEX_ETC import SpaCEX_ETC
+<pre><code class="language-python">from SIGEL.src.SIGEL_ETC.src.main.SIGEL_ETC import SIGEL_ETC
 </code></pre>
 <pre><code class="language-python"># get data on 10x and sqf
-adata = SpaCEX_ETC.get_data(data='sqf', data_type='adata')
-adata, key_m, dataset_m = SpaCEX_ETC.data_process(adata)
-#key_m, dataset_m = SpaCEX_ETC.get_data(data='sqf', data_type='image')
-key_v, dataset_v = SpaCEX_ETC.get_data(data='10x', data_type='image')
+adata = SIGEL_ETC.get_data(data='sqf', data_type='adata')
+adata, key_m, dataset_m = SIGEL_ETC.data_process(adata)
+#key_m, dataset_m = SIGEL_ETC.get_data(data='sqf', data_type='image')
+key_v, dataset_v = SIGEL_ETC.get_data(data='10x', data_type='image')
 </code></pre>
-<h2 id="step2-train-the-spacex-etc">Step2: Train the SpaCEX-ETC</h2>
-<pre><code class="language-python"># load pretrained SpaCEX
-model = SpaCEX_ETC.load_model()
-all_gmat_v2m, all_gmat_m2v = SpaCEX_ETC.data_filter(key_v, dataset_v, key_m, dataset_m)
+<h2 id="step2-train-the-sigel-etc">Step2: Train the SIGEL-ETC</h2>
+<pre><code class="language-python"># load pretrained SIGEL
+model = SIGEL_ETC.load_model()
+all_gmat_v2m, all_gmat_m2v = SIGEL_ETC.data_filter(key_v, dataset_v, key_m, dataset_m)
 </code></pre>
-<pre><code class="language-python">Gen, SGEs = SpaCEX_ETC.train_ETC(adata, all_gmat_v2m, all_gmat_m2v, model)
+<pre><code class="language-python">Gen, SGEs = SIGEL_ETC.train_ETC(adata, all_gmat_v2m, all_gmat_m2v, model)
 </code></pre>
 <pre><code>100%|██████████| 100/100 [00:46&lt;00:00,  2.13it/s]
 </code></pre>
 <h2 id="step3-generate-genes-expression-image-on-the-test-set">Step3: Generate genes expression image on the test set</h2>
-<pre><code class="language-python">img_gen = SpaCEX_ETC.sqf_gen(Gen, SGEs, adata)
+<pre><code class="language-python">img_gen = SIGEL_ETC.sqf_gen(Gen, SGEs, adata)
 </code></pre>
 <pre><code class="language-python">import matplotlib.pyplot as plt
 import torch

@@ -1,8 +1,8 @@
 ## Step1: Load data
 ```python
-from SpaCEX.src.SpaCEX_SVG.utils import simu_zinb
-from SpaCEX.src.SpaCEX_SVG.utils import get_svg_score
-from SpaCEX.src.main.SpaCEX import SpaCEX
+from SIGEL.src.SIGEL_SVG.utils import simu_zinb
+from SIGEL.src.SIGEL_SVG.utils import get_svg_score
+from SIGEL.src.main.SIGEL import SIGEL
 import matplotlib.pyplot as plt
 import pandas as pd
 import scanpy as sc
@@ -14,21 +14,21 @@ warnings.filterwarnings("ignore")
 
 ```python
 ## get adata and image data
-adata= SpaCEX.get_data(sample_id='151676', data_type='adata')
-dataset, adata = SpaCEX.data_process(adata)
+adata= SIGEL.get_data(sample_id='151676', data_type='adata')
+dataset, adata = SIGEL.data_process(adata)
 ```
 
     adata2image: 100%|██████████| 18639/18639 [05:25<00:00, 57.27gene/s]
 
-## Step2: Train SpaCEX to get SGEs
+## Step2: Train SIGEL to get SGEs
 
 ```python
 ## train model with pretrained model
-y_pred, SGEs, model = SpaCEX.train(dataset=dataset, pretrain=False)
+y_pred, SGEs, model = SIGEL.train(dataset=dataset, pretrain=False)
 ```
 
     use cuda: True
-    load pretrained mae from SpaCEX/model_pretrained/SpaCEX.pkl
+    load pretrained mae from SIGEL/model_pretrained/SIGEL.pkl
 
 
     Clustering: 100%|██████████| 30/30 [07:55<00:00, 15.84s/it]
