@@ -6,3 +6,4 @@ extra_css:
   - "css/mystyle.css"
 nav:
   - SIGEL: index.md
+

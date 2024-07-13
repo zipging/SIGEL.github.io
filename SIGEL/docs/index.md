@@ -2,7 +2,7 @@
 We develop the **S**patially **I**nformed **G**ene **E**mbedding **L**earning (**SIGEL**) that can simultaneously identify spatially co-expressed genes and learn semantically meaningful gene embeddings from SRT data through a pretext task of gene clustering. SIGEL first employs an image encoder to transform the spatial expression maps of genes into gene embeddings modeled by a Student’s t mixture distribution (SMM). Subsequently, a discriminatively boosted gene clustering algorithm is applied on the posterior soft assignments of genes to the mixture components, iteratively adapting the parameters of the encoder and the SMM.
 
 <div style="text-align: center;">
-    <img src="logo_name.png" style="max-width: 50%; height: auto;">
+    <img src="logo_name.png" style="max-width: 50%; height: auto;" width="400">
 </div>
 
 
@@ -12,7 +12,7 @@ The limited exploration into spatial gene co-expression within tissues has been 
 
 ![png](Figure 1.png)
 
-As shown in the figure above , **SIGEL** generates semantically meaningful gene Representations (SGRs) by identifying spatial gene co-expression patterns. Cofunctional and enrichment analyses of SGRs endorse their utility as genomic contexts, validated through relational semantics and exploration of gene functional ontology. Three novel SGR-based methods are proposed for enhancing FISH-based spatial transcriptomics, detecting spatially variable genes, and spatial clustering. Extensive real data results affirm the superior performance of these methods, highlighting the utility of SGRs for downstream tasks.
+As shown in the figure above, **SIGEL** generates semantically meaningful gene Representations (SGRs) by identifying spatial gene co-expression patterns. Cofunctional and enrichment analyses of SGRs endorse their utility as genomic contexts, validated through relational semantics and exploration of gene functional ontology. Three novel SGR-based methods are proposed for enhancing FISH-based spatial transcriptomics, detecting spatially variable genes, and spatial clustering. Extensive real data results affirm the superior performance of these methods, highlighting the utility of SGRs for downstream tasks.
 
 # 1 Preparation
 
@@ -20,7 +20,7 @@ As shown in the figure above , **SIGEL** generates semantically meaningful gene 
 
 To use SIGEL, please download code from https://github.com/WLatSunLab/SIGEL or conduct code below:
 
-```python
+```bash
 git clone https://github.com/WLatSunLab/SIGEL.git
 ```
 
