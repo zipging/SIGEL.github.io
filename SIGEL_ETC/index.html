@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    
+    
+    <link rel="shortcut icon" href="../img/favicon.ico">
+
+    
+    <title>SIGEL ETC - A context-aware genomic language model for gene spatial expression imputation, pattern detection, and function discovery</title>
+    
+
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.12.0/css/all.css">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.12.0/css/v4-shims.css">
+    <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/hack-font@3.3.0/build/web/hack.min.css">
+    <link href='//rsms.me/inter/inter.css' rel='stylesheet' type='text/css'>
+    <link href='//fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,700italic,400,300,600,700&subset=latin-ext,latin' rel='stylesheet' type='text/css'>
+    <link href="../css/bootstrap-custom.min.css" rel="stylesheet">
+    <link href="../css/base.min.css" rel="stylesheet">
+    <link href="../css/cinder.min.css" rel="stylesheet">
+
+    
+        
+        <link rel="stylesheet" href="//cdn.jsdelivr.net/gh/highlightjs/cdn-release@9.18.0/build/styles/github.min.css">
+        
+    
+    <link href="../css/mystyle.css" rel="stylesheet">
+
+    <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!--[if lt IE 9]>
+            <script src="https://cdn.jsdelivr.net/npm/html5shiv@3.7.3/dist/html5shiv.min.js"></script>
+            <script src="https://cdn.jsdelivr.net/npm/respond.js@1.4.2/dest/respond.min.js"></script>
+        <![endif]-->
+
+    
+
+     
+</head>
+
+<body>
+
+    <div class="navbar navbar-default navbar-fixed-top" role="navigation">
+    <div class="container">
+
+        <!-- Collapsed navigation -->
+        <div class="navbar-header">
+
+            <!-- Main title -->
+
+            
+              <a class="navbar-brand" href="..">A context-aware genomic language model for gene spatial expression imputation, pattern detection, and function discovery</a>
+            
+        </div>
+
+        <!-- Expanded navigation -->
+        <div class="navbar-collapse collapse">
+
+            <ul class="nav navbar-nav navbar-right">
+                    <li>
+                        <a href="#" data-toggle="modal" data-target="#mkdocs_search_modal">
+                            <i class="fas fa-search"></i> Search
+                        </a>
+                    </li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+    <div class="container">
+        
+        
+        <div class="col-md-3"><div class="bs-sidebar hidden-print affix well" role="complementary">
+    <ul class="nav bs-sidenav">
+        <li class="first-level active"><a href="#step1-load-10x-memb-and-sqf-memb">Step1: Load 10x-mEmb and sqf-mEmb</a></li>
+        <li class="first-level "><a href="#step2-train-the-sigel-etc">Step2: Train the SIGEL-ETC</a></li>
+        <li class="first-level "><a href="#step3-generate-genes-expression-image-on-the-test-set">Step3: Generate genes expression image on the test set</a></li>
+    </ul>
+</div></div>
+        <div class="col-md-9" role="main">
+
+<h2 id="step1-load-10x-memb-and-sqf-memb">Step1: Load 10x-mEmb and sqf-mEmb</h2>
+<pre><code class="language-python">from SIGEL.src.SIGEL_ETC.src.main.SIGEL_ETC import SIGEL_ETC
+</code></pre>
+<pre><code class="language-python"># get data on 10x and sqf
+adata = SIGEL_ETC.get_data(data='sqf', data_type='adata')
+adata, key_m, dataset_m = SIGEL_ETC.data_process(adata)
+#key_m, dataset_m = SIGEL_ETC.get_data(data='sqf', data_type='image')
+key_v, dataset_v = SIGEL_ETC.get_data(data='10x', data_type='image')
+</code></pre>
+<h2 id="step2-train-the-sigel-etc">Step2: Train the SIGEL-ETC</h2>
+<pre><code class="language-python"># load pretrained SIGEL
+model = SIGEL_ETC.load_model()
+all_gmat_v2m, all_gmat_m2v = SIGEL_ETC.data_filter(key_v, dataset_v, key_m, dataset_m)
+</code></pre>
+<pre><code class="language-python">Gen, SGEs = SIGEL_ETC.train_ETC(adata, all_gmat_v2m, all_gmat_m2v, model)
+</code></pre>
+<pre><code>100%|██████████| 100/100 [00:46&lt;00:00,  2.13it/s]
+</code></pre>
+<h2 id="step3-generate-genes-expression-image-on-the-test-set">Step3: Generate genes expression image on the test set</h2>
+<pre><code class="language-python">img_gen = SIGEL_ETC.sqf_gen(Gen, SGEs, adata)
+</code></pre>
+<pre><code class="language-python">import matplotlib.pyplot as plt
+import torch
+import numpy as np
+fig, axs = plt.subplots(3, 3, figsize = (12,15), dpi=300)
+idx=329
+key_m = np.array(list(all_gmat_m2v.keys()))
+# real visium
+img_real = torch.tensor(all_gmat_v2m[key_m[301]])
+img_real = img_real.squeeze(0)
+img_real = img_real.cpu().detach().numpy()
+axs[0, 0].imshow(img_real, cmap='Greys', interpolation='nearest')
+axs[0, 0].set_title(key_m[301])
+axs[0, 0].axis('off')
+
+# real img
+img_real = torch.tensor(all_gmat_m2v[key_m[301]])
+img_real = img_real.squeeze(0)
+img_real = img_real.cpu().detach().numpy()
+axs[0, 1].imshow(img_real, cmap='Greys', interpolation='nearest')
+axs[0, 1].set_title('real_{}'.format(key_m[301]))
+axs[0, 1].axis('off')
+
+# gen img
+img_fake = img_gen[301]
+axs[0, 2].imshow(img_fake, cmap='Greys', interpolation='nearest')
+axs[0, 2].set_title('gen_{}'.format(key_m[301]))
+axs[0, 2].axis('off')
+
+# real visium
+img_real = torch.tensor(all_gmat_v2m[key_m[308]])
+img_real = img_real.squeeze(0)
+img_real = img_real.cpu().detach().numpy()
+axs[1, 0].imshow(img_real, cmap='Greys', interpolation='nearest')
+axs[1, 0].set_title(key_m[308])
+axs[1, 0].axis('off')
+
+# real img
+img_real = torch.tensor(all_gmat_m2v[key_m[308]])
+img_real = img_real.squeeze(0)
+img_real = img_real.cpu().detach().numpy()
+axs[1, 1].imshow(img_real, cmap='Greys', interpolation='nearest')
+axs[1, 1].set_title('real_{}'.format(key_m[308]))
+axs[1, 1].axis('off')
+
+# gen img
+img_fake = img_gen[308]
+axs[1, 2].imshow(img_fake, cmap='Greys', interpolation='nearest')
+axs[1, 2].set_title('gen_{}'.format(key_m[308]))
+axs[1, 2].axis('off')
+
+# real visium
+img_real = torch.tensor(all_gmat_v2m[key_m[324]])
+img_real = img_real.squeeze(0)
+img_real = img_real.cpu().detach().numpy()
+axs[2, 0].imshow(img_real, cmap='Greys', interpolation='nearest')
+axs[2, 0].set_title(key_m[324])
+axs[2, 0].axis('off')
+
+# real img
+img_real = torch.tensor(all_gmat_m2v[key_m[324]])
+img_real = img_real.squeeze(0)
+img_real = img_real.cpu().detach().numpy()
+axs[2, 1].imshow(img_real, cmap='Greys', interpolation='nearest')
+axs[2, 1].set_title('real_{}'.format(key_m[324]))
+axs[2, 1].axis('off')
+
+# gen img
+img_fake = img_gen[324]
+axs[2, 2].imshow(img_fake, cmap='Greys', interpolation='nearest')
+axs[2, 2].set_title('gen_{}'.format(key_m[324]))
+axs[2, 2].axis('off')
+
+plt.show()
+</code></pre>
+<p><img alt="png" src="../output_5_0.png" /></p>
+<pre><code class="language-python">
+</code></pre></div>
+        
+        
+    </div>
+
+    
+      <footer class="col-md-12 text-center">
+          
+          
+            <hr>
+            <p>
+            <small>Documentation built with <a href="http://www.mkdocs.org/">MkDocs</a>.</small>
+            </p>
+          
+
+          
+          
+      </footer>
+    
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+    <script src="../js/bootstrap-3.0.3.min.js"></script>
+
+    
+    <script src="//cdn.jsdelivr.net/gh/highlightjs/cdn-release@9.18.0/build/highlight.min.js"></script>
+        
+    <script>hljs.initHighlightingOnLoad();</script>
+    
+
+    <script>var base_url = ".."</script>
+    
+    <script src="../js/base.js"></script>
+    <script src="../search/main.js"></script>
+
+    <div class="modal" id="mkdocs_search_modal" tabindex="-1" role="dialog" aria-labelledby="searchModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">
+                    <span aria-hidden="true">&times;</span>
+                    <span class="sr-only">Close</span>
+                </button>
+                <h4 class="modal-title" id="searchModalLabel">Search</h4>
+            </div>
+            <div class="modal-body">
+                <p>
+                    From here you can search these documents. Enter
+                    your search terms below.
+                </p>
+                <form>
+                    <div class="form-group">
+                        <input type="text" class="form-control" placeholder="Search..." id="mkdocs-search-query" title="Type search term here">
+                    </div>
+                </form>
+                <div id="mkdocs-search-results"></div>
+            </div>
+            <div class="modal-footer">
+            </div>
+        </div>
+    </div>
+</div><div class="modal" id="mkdocs_keyboard_modal" tabindex="-1" role="dialog" aria-labelledby="keyboardModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title" id="keyboardModalLabel">Keyboard Shortcuts</h4>
+                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+            </div>
+            <div class="modal-body">
+              <table class="table">
+                <thead>
+                  <tr>
+                    <th style="width: 20%;">Keys</th>
+                    <th>Action</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td class="help shortcut"><kbd>?</kbd></td>
+                    <td>Open this help</td>
+                  </tr>
+                  <tr>
+                    <td class="next shortcut"><kbd>n</kbd></td>
+                    <td>Next page</td>
+                  </tr>
+                  <tr>
+                    <td class="prev shortcut"><kbd>p</kbd></td>
+                    <td>Previous page</td>
+                  </tr>
+                  <tr>
+                    <td class="search shortcut"><kbd>s</kbd></td>
+                    <td>Search</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <div class="modal-footer">
+            </div>
+        </div>
+    </div>
+</div>
+    </body>
+
+</html>

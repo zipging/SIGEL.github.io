@@ -11,7 +11,7 @@
     <link rel="shortcut icon" href="../img/favicon.ico">
 
     
-    <title>Preparation - Learning Context-aware Distributed Gene Representations in Spatial Transcriptomics with SpaCEX</title>
+    <title>Preparation - A context-aware genomic language model for gene spatial expression imputation, pattern detection, and function discovery</title>
     
 
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.12.0/css/all.css">
@@ -52,7 +52,7 @@
             <!-- Main title -->
 
             
-              <a class="navbar-brand" href="..">Learning Context-aware Distributed Gene Representations in Spatial Transcriptomics with SpaCEX</a>
+              <a class="navbar-brand" href="..">A context-aware genomic language model for gene spatial expression imputation, pattern detection, and function discovery</a>
             
         </div>
 
@@ -82,23 +82,23 @@
                 
             <li class="second-level"><a href="#data-in-spacific-task">Data in spacific task</a></li>
                 
-                <li class="third-level"><a href="#spacex-etc">SpaCEX-ETC</a></li>
-                <li class="third-level"><a href="#spacex-svg">SpaCEX-SVG</a></li>
-                <li class="third-level"><a href="#spacex-sc">SpaCEX-SC</a></li>
+                <li class="third-level"><a href="#sigel-etc">SIGEL-ETC</a></li>
+                <li class="third-level"><a href="#sigel-svg">SIGEL-SVG</a></li>
+                <li class="third-level"><a href="#sigel-sc">SIGEL-SC</a></li>
     </ul>
 </div></div>
         <div class="col-md-9" role="main">
 
 <h1 id="preparation">Preparation</h1>
 <h2 id="installation">Installation</h2>
-<p>Downloading SpaCEX code from https://github.com/WLatSunLab/SpaCEX</p>
-<pre><code class="language-pytho">git clone https://github.com/WLatSunLab/SpaCEX.git
+<p>Downloading SIGEL code from https://github.com/WLatSunLab/SIGEL</p>
+<pre><code class="language-pytho">git clone https://github.com/WLatSunLab/SIGEL.git
 </code></pre>
-<p>Rename SpaCEX-main as SpaCEX.</p>
+<p>Rename SIGEL-main as SIGEL.</p>
 <h2 id="download-data">Download Data</h2>
 <p>You can get the mouse hippocampus dataset <a href="https://singlecell.broadinstitute.org/single_cell/study/SCP815/sensitive-spatial-genome-wide-expression-profiling-at-cellular-resolution#study-summary.">ssq-mHippo</a>, the human <a href="https://www.sciencedirect.com/topics/psychology/dorsolateral-prefrontal-cortex">dorsolateral prefrontal cortex</a> datasets <a href="http://spatial.libd.org/spatialLIBD">10x-hDLPFC</a> are available. The human breast cancer dataset <a href="https://support.10xgenomics.com/spatial-gene-expression/datasets/1.1.0/V1_Breast_Cancer_Block_A_Section_1">10x-hBC</a> can be obtained. The mouse embryo dataset based on 10x Visium <a href="https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE178636">10x-mEmb</a> can be found. The mouse embryo dataset based on SeqFISH <a href="https://crukci.shinyapps.io/SpatialMouseAtlas/">sqf-mEmb</a> is obtainable. </p>
-<p>You can also obtain the example data <a href="https://drive.google.com/drive/folders/1C3Gk-HVYp2dQh4id8H68M9p8IWEOIut_?usp=drive_link">here</a> required for SpaCEX.and make sure these data are organized in the following structure:</p>
-<pre><code>-SpaCEX
+<p>You can also obtain the example data <a href="https://drive.google.com/drive/folders/1C3Gk-HVYp2dQh4id8H68M9p8IWEOIut_?usp=drive_link">here</a> required for SIGEL.and make sure these data are organized in the following structure:</p>
+<pre><code>-SIGEL
   -data
     -151676_10xvisium.h5ad
     -DLPFC_matrix_151676.dat
@@ -110,23 +110,23 @@
   -...
 </code></pre>
 <h2 id="data-in-spacific-task">Data in spacific task</h2>
-<h3 id="spacex-etc">SpaCEX-ETC</h3>
-<pre><code class="language-python">from SpaCEX.src.main.SpaCEX import SpaCEX
+<h3 id="sigel-etc">SIGEL-ETC</h3>
+<pre><code class="language-python">from SIGEL.src.main.SIGEL import SIGEL
 ## get data on 10x and sqf
-adata = SpaCEX_ETC.get_data(data='sqf', data_type='adata')
-adata, key_m, dataset_m = SpaCEX_ETC.data_process(adata)
-# key_m, dataset_m = SpaCEX_ETC.get_data(data='sqf', data_type='image')
-key_v, dataset_v = SpaCEX_ETC.get_data(data='10x', data_type='image')
+adata = SIGEL_ETC.get_data(data='sqf', data_type='adata')
+adata, key_m, dataset_m = SIGEL_ETC.data_process(adata)
+# key_m, dataset_m = SIGEL_ETC.get_data(data='sqf', data_type='image')
+key_v, dataset_v = SIGEL_ETC.get_data(data='10x', data_type='image')
 </code></pre>
-<h3 id="spacex-svg">SpaCEX-SVG</h3>
+<h3 id="sigel-svg">SIGEL-SVG</h3>
 <pre><code class="language-python">## get adata and image data
-adata= SpaCEX.get_data(sample_id='151676', data_type='adata')
-dataset, adata = SpaCEX.data_process(adata)
+adata= SIGEL.get_data(sample_id='151676', data_type='adata')
+dataset, adata = SIGEL.data_process(adata)
 </code></pre>
-<h3 id="spacex-sc">SpaCEX-SC</h3>
+<h3 id="sigel-sc">SIGEL-SC</h3>
 <pre><code class="language-python">## get adata and image data
-adata= SpaCEX.get_data(sample_id='151676', data_type='adata')
-dataset, adata = SpaCEX.data_process(adata)
+adata= SIGEL.get_data(sample_id='151676', data_type='adata')
+dataset, adata = SIGEL.data_process(adata)
 </code></pre></div>
         
         
