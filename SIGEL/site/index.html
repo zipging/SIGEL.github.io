@@ -95,17 +95,17 @@
 <h1 id="0-welcome-to-sigel">0 Welcome to SIGEL</h1>
 <p>We develop the <strong>S</strong>patially <strong>I</strong>nformed <strong>G</strong>ene <strong>E</strong>mbedding <strong>L</strong>earning (<strong>SIGEL</strong>) that can simultaneously identify spatially co-expressed genes and learn semantically meaningful gene embeddings from SRT data through a pretext task of gene clustering. SIGEL first employs an image encoder to transform the spatial expression maps of genes into gene embeddings modeled by a Student’s t mixture distribution (SMM). Subsequently, a discriminatively boosted gene clustering algorithm is applied on the posterior soft assignments of genes to the mixture components, iteratively adapting the parameters of the encoder and the SMM.</p>
 <div style="text-align: center;">
-    <img src="logo_name.png" style="max-width: 50%; height: auto;">
+    <img src="logo_name.png" style="max-width: 50%; height: auto;" width="400">
 </div>
 
 <h2 id="01-introduction">0.1 Introduction</h2>
 <p>The limited exploration into spatial gene co-expression within tissues has been a significant bottleneck in fully harnessing the spatial genomic context for more insightful gene representations. To bridge this gap, we introduce <strong>SIGEL</strong>, a novel few-shot, self-supervised learning model tailored for the genomic field.</p>
 <p><img alt="png" src="Figure%201.png" /></p>
-<p>As shown in the figure above , <strong>SIGEL</strong> generates semantically meaningful gene Representations (SGRs) by identifying spatial gene co-expression patterns. Cofunctional and enrichment analyses of SGRs endorse their utility as genomic contexts, validated through relational semantics and exploration of gene functional ontology. Three novel SGR-based methods are proposed for enhancing FISH-based spatial transcriptomics, detecting spatially variable genes, and spatial clustering. Extensive real data results affirm the superior performance of these methods, highlighting the utility of SGRs for downstream tasks.</p>
+<p>As shown in the figure above, <strong>SIGEL</strong> generates semantically meaningful gene Representations (SGRs) by identifying spatial gene co-expression patterns. Cofunctional and enrichment analyses of SGRs endorse their utility as genomic contexts, validated through relational semantics and exploration of gene functional ontology. Three novel SGR-based methods are proposed for enhancing FISH-based spatial transcriptomics, detecting spatially variable genes, and spatial clustering. Extensive real data results affirm the superior performance of these methods, highlighting the utility of SGRs for downstream tasks.</p>
 <h1 id="1-preparation">1 Preparation</h1>
 <h2 id="11-installation">1.1 Installation</h2>
 <p>To use SIGEL, please download code from https://github.com/WLatSunLab/SIGEL or conduct code below:</p>
-<pre><code class="language-python">git clone https://github.com/WLatSunLab/SIGEL.git
+<pre><code class="language-bash">git clone https://github.com/WLatSunLab/SIGEL.git
 </code></pre>
 <h2 id="12-how-to-get-help-for-sigel">1.2 How to get help for SIGEL</h2>
 <p>Questions about SIGEL's code or experiments can be asked in the GitHub issue section at https://github.com/WLatSunLab/SIGEL.</p>
@@ -254,5 +254,5 @@ z, model = SIGEL.train(dataset, pretrain=True)
 
 <!--
 MkDocs version : 1.6.0
-Build Date UTC : 2024-06-29 07:59:34.054613+00:00
+Build Date UTC : 2024-07-13 12:19:48.848084+00:00
 -->
