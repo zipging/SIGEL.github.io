@@ -61,7 +61,9 @@ pre {
     background-repeat: repeat;
     font-family: Inter,"Helvetica Neue",Helvetica,Arial,sans-serif;
     font-size: 13px;
+    width: 250px; 
 }
+
 .well {
     background-color: #FCFDFF;
 }

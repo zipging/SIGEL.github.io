@@ -24,4 +24,12 @@ p {
   padding: 5px;
   cursor: pointer;
 }
+.bs-sidenav {
+  margin-left: -2px;
+  background-image: url("../img/grid11.png");
+  background-repeat: repeat;
+  font-family: Inter,"Helvetica Neue",Helvetica,Arial,sans-serif;
+  font-size: 13px;
+  width: 250px; 
+}
 
