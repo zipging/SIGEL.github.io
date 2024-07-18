@@ -189,7 +189,7 @@ plt.show()
 </code></pre>
 <p><img alt="png" src="show_6_gene_images.png" /></p>
 <h2 id="23-getting-sgrs">2.3 Getting SGRs</h2>
-<pre><code class="language-python">SGRs, model = SIGEL.train(dataset, pretrain=True)
+<pre><code class="language-python">labels, SGRs, model = SIGEL.train(dataset, pretrain=True)
 </code></pre>
 <pre><code>use cuda: True
 Pretrain: 100%|██████████| 30/30 [02:56&lt;00:00,  5.87s/it]
@@ -201,7 +201,7 @@ torch.Size([16060, 32])
 <h2 id="24-gene-co-expression-information">2.4 Gene co-expression information</h2>
 <p>The effects of clustering as an auxiliary task will be demonstrated, and it will be evaluated whether SGRs can capture gene co-expression information.</p>
 <pre><code class="language-bash">import squidpy as sq
-adata.var['cluster_id']=label
+adata.var['cluster_id']=labels
 name = list(adata.var_names[adata.var['cluster_id']==1])
 sq.pl.spatial_scatter(adata, color=name[:8])
 </code></pre>
@@ -358,6 +358,7 @@ ARI: 0.4421413788706413
 WARNING: Please specify a valid `library_id` or set it permanently in `adata.uns['spatial']`
 </code></pre>
 <p><img src="gen_leiden.png" width="500"></p>
+<p># 4 Spatial variability genes detection</p>
 <p><strong>Everything else is prepared and ready for deployment. If you have any other needs, please directly contact Wenlin Li at the email: zipging@gmail.com.</strong></p></div>
         
         
@@ -463,5 +464,5 @@ WARNING: Please specify a valid `library_id` or set it permanently in `adata.uns
 
 <!--
 MkDocs version : 1.6.0
-Build Date UTC : 2024-07-15 13:46:29.830885+00:00
+Build Date UTC : 2024-07-18 07:22:42.136741+00:00
 -->
