@@ -115,7 +115,7 @@
                 
             <li class="second-level"><a href="#41-load-dataset">4.1 Load dataset</a></li>
                 
-            <li class="second-level"><a href="#43-calcute-svgs-score">4.3 Calcute SVGs score</a></li>
+            <li class="second-level"><a href="#43-calculate-svgs-score">4.3 Calculate SVGs score</a></li>
                 
             <li class="second-level"><a href="#44-display-svgs">4.4 Display SVGs</a></li>
                 
@@ -386,7 +386,7 @@ gene_name = adata.var.index.values</p>
 ```bash
 labels, SGRs, model = SIGEL.train(dataset=dataset, pretrain=False)
 </code></pre>
-<h2 id="43-calcute-svgs-score">4.3 Calcute SVGs score</h2>
+<h2 id="43-calculate-svgs-score">4.3 Calculate SVGs score</h2>
 <pre><code class="language-bash">svg_score = get_svg_score(SGRs, dataset, adata, model, sim_times=10)
 ascending_indices = np.argsort(svg_score)
 descending_indices = ascending_indices[::-1]
@@ -528,5 +528,5 @@ plt.show()
 
 <!--
 MkDocs version : 1.6.0
-Build Date UTC : 2024-07-19 02:28:03.421144+00:00
+Build Date UTC : 2024-07-19 02:30:06.966660+00:00
 -->
