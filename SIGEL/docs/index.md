@@ -286,7 +286,7 @@ ari_evalution(adata_imp)
  <img src="gen_leiden.png" width="500">
 
 
- # 4 Spatial variability genes detection
+# 4 Spatial variability genes detection
 ## 4.1 Load dataset
  ```bash
  from src.SIGEL_SVG import simu_zinb
