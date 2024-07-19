@@ -113,6 +113,14 @@
                 
             <li class="second-level"><a href="#39-display-enhanced-leigen-result">3.9 Display enhanced leigen result</a></li>
                 
+            <li class="second-level"><a href="#41-load-dataset">4.1 Load dataset</a></li>
+                
+            <li class="second-level"><a href="#43-calculate-svgs-score">4.3 Calculate SVGs score</a></li>
+                
+            <li class="second-level"><a href="#44-display-svgs">4.4 Display SVGs</a></li>
+                
+            <li class="second-level"><a href="#45-display-non-svgs">4.5 DIsplay non-SVGs</a></li>
+                
     </ul>
 </div></div>
         <div class="col-md-9" role="main">
@@ -189,7 +197,7 @@ plt.show()
 </code></pre>
 <p><img alt="png" src="show_6_gene_images.png" /></p>
 <h2 id="23-getting-sgrs">2.3 Getting SGRs</h2>
-<pre><code class="language-python">SGRs, model = SIGEL.train(dataset, pretrain=True)
+<pre><code class="language-python">labels, SGRs, model = SIGEL.train(dataset, pretrain=True)
 </code></pre>
 <pre><code>use cuda: True
 Pretrain: 100%|██████████| 30/30 [02:56&lt;00:00,  5.87s/it]
@@ -201,7 +209,7 @@ torch.Size([16060, 32])
 <h2 id="24-gene-co-expression-information">2.4 Gene co-expression information</h2>
 <p>The effects of clustering as an auxiliary task will be demonstrated, and it will be evaluated whether SGRs can capture gene co-expression information.</p>
 <pre><code class="language-bash">import squidpy as sq
-adata.var['cluster_id']=label
+adata.var['cluster_id']=labels
 name = list(adata.var_names[adata.var['cluster_id']==1])
 sq.pl.spatial_scatter(adata, color=name[:8])
 </code></pre>
@@ -358,6 +366,63 @@ ARI: 0.4421413788706413
 WARNING: Please specify a valid `library_id` or set it permanently in `adata.uns['spatial']`
 </code></pre>
 <p><img src="gen_leiden.png" width="500"></p>
+<p># 4 Spatial variability genes detection</p>
+<h2 id="41-load-dataset">4.1 Load dataset</h2>
+<p>```bash
+ from src.SIGEL_SVG import simu_zinb
+from src.SIGEL_SVG import get_svg_score
+from src.SIGEL.SIGEL import SIGEL
+import matplotlib.pyplot as plt
+import numpy as np
+import pandas as pd
+import scanpy as sc
+import warnings
+warnings.filterwarnings("ignore")</p>
+<p>adata= SIGEL.get_data(sample_id='151676', data_type='adata')
+dataset, adata = SIGEL.data_process(adata)
+gene_name = adata.var.index.values</p>
+<pre><code>
+## 4.2 Train SIGEL
+```bash
+labels, SGRs, model = SIGEL.train(dataset=dataset, pretrain=False)
+</code></pre>
+<h2 id="43-calculate-svgs-score">4.3 Calculate SVGs score</h2>
+<pre><code class="language-bash">svg_score = get_svg_score(SGRs, dataset, adata, model, sim_times=10)
+ascending_indices = np.argsort(svg_score)
+descending_indices = ascending_indices[::-1]
+</code></pre>
+<h2 id="44-display-svgs">4.4 Display SVGs</h2>
+<pre><code class="language-bash">## gene expression whitin high svg score
+plot_gene = gene_name[descending_indices[:4]]
+
+fig, axs = plt.subplots(2, 2, figsize=(8, 8))
+
+sc.pl.spatial(adata, img_key=&quot;hires&quot;, color=plot_gene[0], show=False, ax=axs[0, 0], title=plot_gene[0], vmax='p99')
+sc.pl.spatial(adata, img_key=&quot;hires&quot;, color=plot_gene[1], show=False, ax=axs[0, 1], title=plot_gene[1], vmax='p99')
+sc.pl.spatial(adata, img_key=&quot;hires&quot;, color=plot_gene[2], show=False, ax=axs[1, 0], title=plot_gene[2], vmax='p99')
+sc.pl.spatial(adata, img_key=&quot;hires&quot;, color=plot_gene[3], show=False, ax=axs[1, 1], title=plot_gene[3], vmax='p99')
+
+plt.tight_layout()
+plt.savefig(&quot;svg_high_6genes.png&quot;, dpi=100, bbox_inches=&quot;tight&quot;)
+plt.show()
+</code></pre>
+<p><img alt="png" src="output_6_0.png" /></p>
+<h2 id="45-display-non-svgs">4.5 DIsplay non-SVGs</h2>
+<pre><code class="language-bash">## gene expression whitin low svg score
+plot_gene = gene_name[ascending_indices[2:6]]
+
+fig, axs = plt.subplots(2, 2, figsize=(8, 8))
+
+sc.pl.spatial(adata, img_key=&quot;hires&quot;, color=plot_gene[0], show=False, ax=axs[0, 0], title=plot_gene[0], vmax='p99')
+sc.pl.spatial(adata, img_key=&quot;hires&quot;, color=plot_gene[1], show=False, ax=axs[0, 1], title=plot_gene[1], vmax='p99')
+sc.pl.spatial(adata, img_key=&quot;hires&quot;, color=plot_gene[2], show=False, ax=axs[1, 0], title=plot_gene[2], vmax='p99')
+sc.pl.spatial(adata, img_key=&quot;hires&quot;, color=plot_gene[3], show=False, ax=axs[1, 1], title=plot_gene[3], vmax='p99')
+
+plt.tight_layout()
+plt.savefig(&quot;svg_low_6genes.png&quot;, dpi=100, bbox_inches=&quot;tight&quot;)
+plt.show()
+</code></pre>
+<p><img alt="png" src="output_7_0.png" /></p>
 <p><strong>Everything else is prepared and ready for deployment. If you have any other needs, please directly contact Wenlin Li at the email: zipging@gmail.com.</strong></p></div>
         
         
@@ -463,5 +528,5 @@ WARNING: Please specify a valid `library_id` or set it permanently in `adata.uns
 
 <!--
 MkDocs version : 1.6.0
-Build Date UTC : 2024-07-15 13:46:29.830885+00:00
+Build Date UTC : 2024-07-19 02:30:06.966660+00:00
 -->
