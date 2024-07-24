@@ -125,7 +125,7 @@
         <li class="first-level "><a href="#5-designated-expression-patterns-across-specific-tissue-regions">5 Designated expression patterns across specific tissue regions</a></li>
             <li class="second-level"><a href="#51-data-loading-and-preprocessing">5.1 Data loading and preprocessing</a></li>
                 
-            <li class="second-level"><a href="#52-simulation">5.2 Simulation</a></li>
+            <li class="second-level"><a href="#52-simulate">5.2 Simulate</a></li>
                 
             <li class="second-level"><a href="#53-denoising">5.3 Denoising</a></li>
                 
@@ -448,7 +448,7 @@ adata = SIGEL.get_data(sample_id='151676', data_type='adata')
 preprocess = preprocess(seed=12)
 adata = preprocess.data_process(adata=adata)
 </code></pre>
-<h2 id="52-simulation">5.2 Simulation</h2>
+<h2 id="52-simulate">5.2 Simulate</h2>
 <p>Specify the expression levels for each domain and then simulate genes with designated expression patterns.</p>
 <pre><code class="language-bash">sim_spatial_pattern = sim_spatial_pattern(seed=12)
 sim_data = sim_spatial_pattern.simulate(adata, region_key='cluster', region_list=['L1', 'L2', 'L3', 'L4', 'L5', 'L6', 'WM'],
@@ -671,5 +671,5 @@ plt.show()
 
 <!--
 MkDocs version : 1.6.0
-Build Date UTC : 2024-07-24 06:34:10.567490+00:00
+Build Date UTC : 2024-07-24 06:35:20.830942+00:00
 -->
