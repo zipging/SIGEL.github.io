@@ -133,6 +133,21 @@
                 
             <li class="second-level"><a href="#55-another-example">5.5 Another example</a></li>
                 
+        <li class="first-level "><a href="#6-improving-spatial-clustering">6 Improving spatial clustering</a></li>
+            <li class="second-level"><a href="#61-load-dataset">6.1 Load dataset</a></li>
+                
+            <li class="second-level"><a href="#62-obtain-sgrs">6.2 Obtain SGRs</a></li>
+                
+            <li class="second-level"><a href="#63-calculate-svg_scores">6.3 Calculate SVG_Scores</a></li>
+                
+            <li class="second-level"><a href="#64-60-selection">6.4 60% Selection</a></li>
+                
+            <li class="second-level"><a href="#65-nmi-ari">6.5 NMI &amp; ARI</a></li>
+                
+            <li class="second-level"><a href="#66-70-selection">6.6 70% Selection</a></li>
+                
+            <li class="second-level"><a href="#67-100-selection">6.7 100% Selection</a></li>
+                
     </ul>
 </div></div>
         <div class="col-md-9" role="main">
@@ -566,6 +581,270 @@ plt.savefig(&quot;simulated_5_65.png&quot;, dpi=100, bbox_inches=&quot;tight&quo
 plt.show()
 </code></pre>
 <p><img alt="png" src="output_43_0.png" /></p>
+<h1 id="6-improving-spatial-clustering">6 Improving spatial clustering</h1>
+<p>In this section, we use the 10x-hDLPFC-151676 dataset as test data to perform spatial clustering with SpaGCN. We will evaluate the clustering performance by filtering genes based on the SVG_Scores in three scenarios: selecting 60% of the genes, selecting 70% of the genes, and using all genes without any filtering.</p>
+<h2 id="61-load-dataset">6.1 Load dataset</h2>
+<pre><code class="language-bash">from src.SIGEL.SIGEL import SIGEL
+import warnings
+warnings.filterwarnings(&quot;ignore&quot;)
+
+adata= SIGEL.get_data(sample_id='151676', data_type='adata')
+dataset, adata = SIGEL.data_process(adata)
+gene_name = adata.var.index.values
+</code></pre>
+<h2 id="62-obtain-sgrs">6.2 Obtain SGRs</h2>
+<pre><code class="language-bash">labels, SGRs, model = SIGEL.train(dataset, pretrain=True)
+</code></pre>
+<pre><code>use cuda: True
+Pretrain: 100%|██████████| 50/50 [02:49&lt;00:00,  3.39s/it]
+model saved to model_pretrained/SIGEL.pkl.
+load pretrained mae from model_pretrained/SIGEL.pkl
+Clustering: 100%|██████████| 30/30 [06:10&lt;00:00, 12.34s/it]
+</code></pre>
+<h2 id="63-calculate-svg_scores">6.3 Calculate SVG_Scores</h2>
+<pre><code class="language-bash">from src.SIGEL_SVG import get_svg_score
+svg_score = get_svg_score(SGRs, dataset, adata, model, sim_times=10)
+</code></pre>
+<pre><code>100%|██████████| 10/10 [02:11&lt;00:00, 13.20s/it]
+</code></pre>
+<h2 id="64-60-selection">6.4 60% Selection</h2>
+<pre><code class="language-bash">from src.SIGEL_ISC import SIGEL_ISC
+adata= SIGEL.get_data(sample_id='151676', data_type='adata')
+adata.obs['Ground Truth']=adata.obs['layer_guess_reordered_short'] 
+new_samples_indices = SIGEL_ISC.gene_select(labels, svg_score, selection_percentage=0.6)
+adata = SIGEL_ISC.spatial_clustering(adata, new_samples_indices, n_clusters=7)
+</code></pre>
+<pre><code>Calculateing adj matrix using xy only...
+Run 1: l [0.01, 1000], p [0.0, 3421.9987256815807]
+Run 2: l [0.01, 500.005], p [0.0, 3416.00732421875]
+Run 3: l [0.01, 250.0075], p [0.0, 3392.22265625]
+Run 4: l [0.01, 125.00874999999999], p [0.0, 3299.90869140625]
+Run 5: l [0.01, 62.509375], p [0.0, 2971.17138671875]
+un 6: l [0.01, 31.2596875], p [0.0, 2097.834228515625]
+Run 7: l [0.01, 15.63484375], p [0.0, 945.4818725585938]
+Run 8: l [0.01, 7.822421875], p [0.0, 304.0054626464844]
+Run 9: l [0.01, 3.9162109375], p [0.0, 84.49016571044922]
+Run 10: l [0.01, 1.9631054687499998], p [0.0, 21.678667068481445]
+Run 11: l [0.01, 0.9865527343749999], p [0.0, 4.903018474578857]
+Run 12: l [0.01, 0.49827636718749996], p [0.0, 0.5869753360748291]
+Run 13: l [0.25413818359374996, 0.49827636718749996], p [0.0016840696334838867, 0.5869753360748291]
+Run 14: l [0.37620727539062493, 0.49827636718749996], p [0.11651778221130371, 0.5869753360748291]
+Run 15: l [0.4372418212890624, 0.49827636718749996], p [0.304052472114563, 0.5869753360748291]
+Run 16: l [0.4677590942382812, 0.49827636718749996], p [0.43444645404815674, 0.5869753360748291]
+recommended l =  0.48301773071289056
+Start at res =  0.7 step =  0.1
+Initializing cluster centers with louvain, resolution =  0.7
+Epoch  0
+Epoch  10
+Res =  0.7 Num of clusters =  5
+Initializing cluster centers with louvain, resolution =  0.7999999999999999
+Epoch  0
+Epoch  10
+Res =  0.7999999999999999 Num of clusters =  6
+Res changed to 0.7999999999999999
+Initializing cluster centers with louvain, resolution =  0.8999999999999999
+Epoch  0
+Epoch  10
+Res =  0.8999999999999999 Num of clusters =  7
+recommended res =  0.8999999999999999
+Initializing cluster centers with louvain, resolution =  0.8999999999999999
+Epoch  0
+Epoch  10
+Epoch  20
+Epoch  30
+Epoch  40
+Epoch  50
+Epoch  60
+Epoch  70
+Epoch  80
+Epoch  90
+Epoch  100
+Epoch  110
+Epoch  120
+Epoch  130
+Epoch  140
+Epoch  150
+Epoch  160
+Epoch  170
+Epoch  180
+Epoch  190
+Calculateing adj matrix using xy only...
+</code></pre>
+<h2 id="65-nmi-ari">6.5 NMI &amp; ARI</h2>
+<pre><code class="language-bash">## calculate ARI and NMI
+from sklearn.metrics.cluster import normalized_mutual_info_score
+from sklearn.metrics import adjusted_rand_score
+label_pred = list(adata.obs['r_pred'])
+label_pred = np.array(label_pred).astype(int)
+
+ground_truth = list(adata.obs['Ground Truth'])
+category_to_int = {category: idx for idx, category in enumerate(set(ground_truth))}
+
+i = 0
+for key in category_to_int:
+    category_to_int[key] = i
+    i = i+1
+
+ground = [category_to_int[category] for category in ground_truth]
+
+ari = adjusted_rand_score(ground, label_pred)
+print(&quot;ARI:&quot;, ari)
+
+nmi = normalized_mutual_info_score(ground, label_pred)
+print(&quot;NMI:&quot;, nmi)
+</code></pre>
+<pre><code>ARI: 0.48727462612238504
+NMI: 0.6308788297383676
+</code></pre>
+<h2 id="66-70-selection">6.6 70% Selection</h2>
+<pre><code class="language-python">from src.SIGEL_ISC import SIGEL_ISC
+adata= SIGEL.get_data(sample_id='151676', data_type='adata')
+adata.obs['Ground Truth']=adata.obs['layer_guess_reordered_short'] 
+new_samples_indices = SIGEL_ISC.gene_select(labels, svg_score, selection_percentage=0.7)
+adata = SIGEL_ISC.spatial_clustering(adata, new_samples_indices, n_clusters=7)
+</code></pre>
+<pre><code>select 11029 genes
+Calculateing adj matrix using xy only...
+Run 1: l [0.01, 1000], p [0.0, 3421.9987256815807]
+Run 2: l [0.01, 500.005], p [0.0, 3416.00732421875]
+Run 3: l [0.01, 250.0075], p [0.0, 3392.22265625]
+Run 4: l [0.01, 125.00874999999999], p [0.0, 3299.90869140625]
+Run 5: l [0.01, 62.509375], p [0.0, 2971.17138671875]
+Run 6: l [0.01, 31.2596875], p [0.0, 2097.834228515625]
+Run 7: l [0.01, 15.63484375], p [0.0, 945.4818725585938]
+Run 8: l [0.01, 7.822421875], p [0.0, 304.0054626464844]
+Run 9: l [0.01, 3.9162109375], p [0.0, 84.49016571044922]
+Run 10: l [0.01, 1.9631054687499998], p [0.0, 21.678667068481445]
+Run 11: l [0.01, 0.9865527343749999], p [0.0, 4.903018474578857]
+Run 12: l [0.01, 0.49827636718749996], p [0.0, 0.5869753360748291]
+Run 13: l [0.25413818359374996, 0.49827636718749996], p [0.0016840696334838867, 0.5869753360748291]
+Run 14: l [0.37620727539062493, 0.49827636718749996], p [0.11651778221130371, 0.5869753360748291]
+Run 15: l [0.4372418212890624, 0.49827636718749996], p [0.304052472114563, 0.5869753360748291]
+Run 16: l [0.4677590942382812, 0.49827636718749996], p [0.43444645404815674, 0.5869753360748291]
+recommended l =  0.48301773071289056
+Start at res =  0.7 step =  0.1
+Initializing cluster centers with louvain, resolution =  0.7
+Epoch  0
+Epoch  10
+Res =  0.7 Num of clusters =  6
+Initializing cluster centers with louvain, resolution =  0.7999999999999999
+Epoch  0
+Epoch  10
+Res =  0.7999999999999999 Num of clusters =  7
+recommended res =  0.7999999999999999
+Initializing cluster centers with louvain, resolution =  0.7999999999999999
+Epoch  0
+Epoch  10
+Epoch  20
+Epoch  30
+Epoch  40
+delta_label  0.004963503649635037 &lt; tol  0.005
+Reach tolerance threshold. Stopping training.
+Total epoch: 46
+Calculateing adj matrix using xy only...
+</code></pre>
+<pre><code class="language-python">## calculate ARI and NMI
+from sklearn.metrics.cluster import normalized_mutual_info_score
+from sklearn.metrics import adjusted_rand_score
+label_pred = list(adata.obs['r_pred'])
+label_pred = np.array(label_pred).astype(int)
+
+ground_truth = list(adata.obs['Ground Truth'])
+category_to_int = {category: idx for idx, category in enumerate(set(ground_truth))}
+
+i = 0
+for key in category_to_int:
+    category_to_int[key] = i
+    i = i+1
+
+ground = [category_to_int[category] for category in ground_truth]
+
+ari = adjusted_rand_score(ground, label_pred)
+print(&quot;ARI:&quot;, ari)
+
+nmi = normalized_mutual_info_score(ground, label_pred)
+print(&quot;NMI:&quot;, nmi)
+</code></pre>
+<pre><code>ARI: 0.36240751573191976
+NMI: 0.4967488597318761
+</code></pre>
+<h2 id="67-100-selection">6.7 100% Selection</h2>
+<pre><code class="language-python">from src.SIGEL_ISC import SIGEL_ISC
+adata= SIGEL.get_data(sample_id='151676', data_type='adata')
+adata.obs['Ground Truth']=adata.obs['layer_guess_reordered_short'] 
+new_samples_indices = SIGEL_ISC.gene_select(labels, svg_score, selection_percentage=1.0)
+adata = SIGEL_ISC.spatial_clustering(adata, new_samples_indices, n_clusters=7)
+</code></pre>
+<pre><code>select 16060 genes
+Calculateing adj matrix using xy only...
+Run 1: l [0.01, 1000], p [0.0, 3421.9987256815807]
+Run 2: l [0.01, 500.005], p [0.0, 3416.00732421875]
+Run 3: l [0.01, 250.0075], p [0.0, 3392.22265625]
+Run 4: l [0.01, 125.00874999999999], p [0.0, 3299.90869140625]
+Run 5: l [0.01, 62.509375], p [0.0, 2971.17138671875]
+Run 6: l [0.01, 31.2596875], p [0.0, 2097.834228515625]
+Run 7: l [0.01, 15.63484375], p [0.0, 945.4818725585938]
+Run 8: l [0.01, 7.822421875], p [0.0, 304.0054626464844]
+Run 9: l [0.01, 3.9162109375], p [0.0, 84.49016571044922]
+Run 10: l [0.01, 1.9631054687499998], p [0.0, 21.678667068481445]
+Run 11: l [0.01, 0.9865527343749999], p [0.0, 4.903018474578857]
+Run 12: l [0.01, 0.49827636718749996], p [0.0, 0.5869753360748291]
+Run 13: l [0.25413818359374996, 0.49827636718749996], p [0.0016840696334838867, 0.5869753360748291]
+Run 14: l [0.37620727539062493, 0.49827636718749996], p [0.11651778221130371, 0.5869753360748291]
+Run 15: l [0.4372418212890624, 0.49827636718749996], p [0.304052472114563, 0.5869753360748291]
+Run 16: l [0.4677590942382812, 0.49827636718749996], p [0.43444645404815674, 0.5869753360748291]
+recommended l =  0.48301773071289056
+Start at res =  0.7 step =  0.1
+Initializing cluster centers with louvain, resolution =  0.7
+Epoch  0
+Epoch  10
+Res =  0.7 Num of clusters =  7
+recommended res =  0.7
+Initializing cluster centers with louvain, resolution =  0.7
+Epoch  0
+Epoch  10
+Epoch  20
+Epoch  30
+Epoch  40
+Epoch  50
+Epoch  60
+Epoch  70
+Epoch  80
+Epoch  90
+Epoch  100
+Epoch  110
+Epoch  120
+Epoch  130
+delta_label  0.004087591240875913 &lt; tol  0.005
+Reach tolerance threshold. Stopping training.
+Total epoch: 136
+Calculateing adj matrix using xy only...
+</code></pre>
+<pre><code class="language-python">## calculate ARI and NMI
+from sklearn.metrics.cluster import normalized_mutual_info_score
+from sklearn.metrics import adjusted_rand_score
+label_pred = list(adata.obs['r_pred'])
+label_pred = np.array(label_pred).astype(int)
+
+ground_truth = list(adata.obs['Ground Truth'])
+category_to_int = {category: idx for idx, category in enumerate(set(ground_truth))}
+
+i = 0
+for key in category_to_int:
+    category_to_int[key] = i
+    i = i+1
+
+ground = [category_to_int[category] for category in ground_truth]
+
+ari = adjusted_rand_score(ground, label_pred)
+print(&quot;ARI:&quot;, ari)
+
+nmi = normalized_mutual_info_score(ground, label_pred)
+print(&quot;NMI:&quot;, nmi)
+</code></pre>
+<pre><code>ARI: 0.32108580310325163
+NMI: 0.487463199451013
+</code></pre>
 <p><strong>Everything else is prepared and ready for deployment. If you have any other needs, please directly contact Wenlin Li at the email: zipging@gmail.com.</strong></p></div>
         
         
@@ -671,5 +950,5 @@ plt.show()
 
 <!--
 MkDocs version : 1.6.0
-Build Date UTC : 2024-07-24 06:35:20.830942+00:00
+Build Date UTC : 2024-07-25 09:59:00.700026+00:00
 -->
